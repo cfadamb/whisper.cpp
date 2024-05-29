@@ -117,6 +117,6 @@ if [ $? -ne 0 ]; then
 fi
 
 printf "Done! Model '%s' saved in '%s/ggml-%s.bin'\n" "$model" "$models_path" "$model"
-printf "You can now use it like this:\n\n"
-printf "  $ ./main -m %s/ggml-%s.bin -f samples/jfk.wav\n" "$models_path" "$model"
+# printf "You can now use it like this:\n\n"
+# printf "  $ ./main -m %s/ggml-%s.bin -f samples/jfk.wav\n" "$models_path" "$model"
 printf "\n"

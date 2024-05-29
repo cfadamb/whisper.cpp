@@ -53,6 +53,10 @@ CFLAGS   = -I.              -O3 -DNDEBUG -std=c11   -fPIC
 CXXFLAGS = -I. -I./examples -O3 -DNDEBUG -std=c++11 -fPIC
 LDFLAGS  =
 
+ifdef CC_CXX_EXTRA_FLAGS
+	CFLAGS   += $(CC_CXX_EXTRA_FLAGS)
+	CXXFLAGS += $(CC_CXX_EXTRA_FLAGS)
+endif
 ifdef MACOSX_DEPLOYMENT_TARGET
 	CFLAGS   += -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET)
 	CXXFLAGS += -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET)
@@ -223,7 +227,9 @@ ifndef WHISPER_NO_ACCELERATE
 	# Mac M1 - include Accelerate framework
 	ifeq ($(UNAME_S),Darwin)
 		CFLAGS  += -DGGML_USE_ACCELERATE
-		CFLAGS  += -DACCELERATE_NEW_LAPACK
+		ifndef WHISPER_NO_ACCELERATE_NEW_LAPACK
+			CFLAGS  += -DACCELERATE_NEW_LAPACK
+		endif
 		CFLAGS  += -DACCELERATE_LAPACK_ILP64
 		LDFLAGS += -framework Accelerate
 	endif
@@ -439,7 +445,7 @@ ggml-metal-embed.o: ggml-metal.metal ggml-common.h
 	@echo ".incbin \"$(TEMP_METALLIB)\"" >> $(TEMP_ASSEMBLY)
 	@echo ".globl _ggml_metallib_end" >> $(TEMP_ASSEMBLY)
 	@echo "_ggml_metallib_end:" >> $(TEMP_ASSEMBLY)
-	@$(AS) $(TEMP_ASSEMBLY) -o $@
+	@$(AS) $(CC_CXX_EXTRA_FLAGS) $(TEMP_ASSEMBLY) -o $@
 	@rm -f $(TEMP_ASSEMBLY) $(TEMP_METALLIB)
 
 WHISPER_OBJ += ggml-metal-embed.o
